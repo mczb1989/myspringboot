@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>用户信息修改</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div>
+                    <ul  class="nav navbar-nav" >
+                        <li><a href="/userlist">用户管理</a></li>
+                        <li><a href="/booklist">书籍管理</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div>
+        <a href="logout" style="display: inline-block; float: right">退出</a>
+        <p th:text="${#httpSession.getAttribute(#httpSession.getId()).username}" style="display: inline-block; float: right"></p>
+        <p style="display: inline-block; float: right">您好，</p>
+    </div>
+
+    <div>
+        <h2>用户编辑</h2>
+        <form action="userupdateoradd" method="post" class="form-horizontal" role="form" >
+            <div>
+                <div style="display: block">
+                    <label class="col-sm-3">编号：</label>
+                    <input type="text" readonly="true" class="col-sm-3" id="id" name="id" th:value="${user.id}"></input>
+                </div>
+                <div>
+                    <label class="col-sm-3">用户名：</label>
+                    <input type="text" readonly="true" class="col-sm-3" id="username" name="username" th:value="${user.username}"></input>
+                </div>
+            </div>
+            <div style="display: block">
+                <div>
+                    <label class="col-sm-3">邮箱：</label>
+                    <input type="text"  class="col-sm-3 control-label" id="email" name="email" th:value="${user.email}"></input>
+                </div>
+                <div>
+                    <label class="col-sm-3">手机：</label>
+                    <input type="text"  class="col-sm-3" id="mobile" name="mobile" th:value="${user.mobile}"></input>
+                </div>
+            </div>
+            <div style="display: block">
+                <button type="submit" class="btn btn-default">保存
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="/js/jquery-2.2.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+</body>
+</html>

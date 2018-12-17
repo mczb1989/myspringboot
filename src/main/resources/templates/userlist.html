@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://shiro.apache.org/tags">
+<head>
+    <meta charset="UTF-8" />
+    <title>用户管理</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div>
+                    <ul  class="nav navbar-nav" >
+                        <li><a href="/userlist">用户管理</a></li>
+                        <li><a href="/booklist">书籍管理</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div>
+        <a href="logout" style="display: inline-block; float: right">退出</a>
+        <p th:text="${#httpSession.getAttribute(#httpSession.getId()).username}" style="display: inline-block; float: right"></p>
+        <p style="display: inline-block; float: right">您好，</p>
+    </div>
+
+    <div>
+        <h2>用户管理</h2>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_list">
+            <thead>
+            <tr>
+                <th width="20%">编号</th>
+                <th width="20%">用户名</th>
+                <th width="20%">电子邮箱</th>
+                <th width="20%">手机</th>
+                <th width="20%">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user:${users}">
+                <td height="40px"><a th:text="${user.id}" data-toggle="modal" data-target="#myModal" onclick="values(this)"></a></td>
+                <td th:text="${user.username}"></td>
+                <td th:text="${user.email}"></td>
+                <td th:text="${user.mobile}"></td>
+                <td><shiro:hasPermission name="user:edit"><a th:href="@{/useredit(id=${user.id})}" >修改</a></shiro:hasPermission><shiro:hasPermission name="user:delete"><a href="#" class="delete_a" th:value="${user.id}">删除</a></shiro:hasPermission></td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="example" style="text-align: center"> <ul id="pageLimit"></ul> </div>
+        <input type="hidden" id="pageNum" name="pageNum" th:value="${pageInfo.pageNum}" />
+        <input type="hidden" id="pages" name="pages" th:value="${pageInfo.pages}" />
+
+        <!-- 模态框（Modal） -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">
+                            用户详情
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <label class="col-sm-2">编号：</label>
+                            <span class="col-sm-2" id="userId" name="userId"></span>
+                        </div>
+                        <div>
+                            <label class="col-sm-2">用户名：</label>
+                            <span class="col-sm-2" id="username" name="username"></span>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div>
+                            <label class="col-sm-2">邮箱：</label>
+                            <span class="col-sm-2 control-label" id="email" name="email"></span>
+                        </div>
+                        <div>
+                            <label class="col-sm-2">手机：</label>
+                            <span class="col-sm-2" id="mobile" name="mobile"></span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal -->
+        </div>
+    </div>
+</div>
+<script src="/js/jquery-2.2.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-paginator.min.js"></script>
+<script>
+    $('#pageLimit').bootstrapPaginator({
+        currentPage: $("#pageNum").val(),
+        totalPages: $("#pages").val(),
+        size: "normal",
+        bootstrapMajorVersion: 3,
+        alignment: "right",
+        numberOfPages: 5,
+        itemTexts: function (type, page, current) {
+            switch (type) {
+                case "first": return "首页";
+                case "prev": return "上一页";
+                case "next": return "下一页";
+                case "last": return "末页";
+                case "page": return page;
+            }
+        },
+        onPageClicked: function (event, originalEvent, type, page){//给每个页眉绑定一个事件，其实就是ajax请求，其中page变量为当前点击的页上的数字。
+            window.location.href = "userlist?pageNum=" + page;
+        }
+    });
+    function values(a){
+        $.ajax({
+            url:"user?id=" + a.text,
+            success:function(result){
+                document.getElementById("userId").innerText=result.id;
+                document.getElementById("username").innerText=result.username;
+                document.getElementById("email").innerText=result.email;
+                document.getElementById("mobile").innerText=result.mobile;
+            }
+        });
+    }
+    $(function(){
+        $(".delete_a").click(function(){
+            var userId=$(this).attr("value");
+            if(confirm("确认删除吗？")){
+                window.location.href="/userdelete?id=" + userId;
+                return ;
+            }
+        });
+    });
+</script>
+</body>
+</html>

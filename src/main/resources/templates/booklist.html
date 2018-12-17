@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>书籍管理</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div>
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+                <div>
+                    <ul  class="nav navbar-nav" >
+                        <li><a href="/userlist">用户管理</a></li>
+                        <li><a href="/booklist">书籍管理</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div>
+        <a href="logout" style="display: inline-block; float: right">退出</a>
+        <p th:text="${#httpSession.getAttribute(#httpSession.getId()).username}" style="display: inline-block; float: right"></p>
+        <p style="display: inline-block; float: right">您好，</p>
+    </div>
+
+    <div>
+        <h2>书籍管理</h2>
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" class="table_list">
+            <thead>
+            <tr>
+                <th width="20%">编号</th>
+                <th width="20%">书名</th>
+                <th width="20%">作者</th>
+                <th width="20%">日期</th>
+                <th width="20%">价格</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book:${booklist}">
+                <td th:text="${book.id}" height="40px"></td>
+                <td th:text="${book.bookname}"></td>
+                <td th:text="${book.author}"></td>
+                <td th:text="${book.releasedate}"></td>
+                <td th:text="${book.price}"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="example" style="text-align: center"> <ul id="pageLimit"></ul> </div>
+        <input type="hidden" id="pageNum" name="pageNum" th:value="${pageInfo.pageNum}" />
+        <input type="hidden" id="pages" name="pages" th:value="${pageInfo.pages}" />
+    </div>
+</div>
+<script src="/js/jquery-2.2.1.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/bootstrap-paginator.min.js"></script>
+<script>
+    $('#pageLimit').bootstrapPaginator({
+        currentPage: $("#pageNum").val(),
+        totalPages: $("#pages").val(),
+        size: "normal",
+        bootstrapMajorVersion: 3,
+        alignment: "right",
+        numberOfPages: 5,
+        itemTexts: function (type, page, current) {
+            switch (type) {
+                case "first": return "首页";
+                case "prev": return "上一页";
+                case "next": return "下一页";
+                case "last": return "末页";
+                case "page": return page;
+            }
+        },
+        onPageClicked: function (event, originalEvent, type, page){//给每个页眉绑定一个事件，其实就是ajax请求，其中page变量为当前点击的页上的数字。
+            window.location.href = "booklist?pageNum=" + page;
+        }
+    });
+</script>
+</body>
+</html>
